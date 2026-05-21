@@ -159,6 +159,10 @@ public partial class App : Application
                             File.AppendAllText(logFile, $"Failed to delete start menu shortcut: {ex.Message}\n");
                         }
 
+                        // Refresh icon cache to notify explorer of shortcut deletion
+                        RefreshIconCache();
+                        File.AppendAllText(logFile, "Shell notified of shortcut deletion to refresh icon cache.\n");
+
                         // 4. Remove registry entry
                         try
                         {
