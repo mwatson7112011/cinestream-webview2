@@ -65,6 +65,10 @@ public partial class App : Application
 
             if (isUninstall)
             {
+                // Switch to persistent uninstall log file outside targetDir
+                logFile = GetUninstallLogPath();
+                File.WriteAllText(logFile, $"Uninstall process started. Target directory: {targetDir}\n");
+
                 MessageBoxResult result = MessageBoxResult.Yes;
                 if (!isSilent)
                 {
@@ -93,6 +97,7 @@ public partial class App : Application
                                     {
                                         proc.Kill();
                                         proc.WaitForExit(3000);
+                                        File.AppendAllText(logFile, $"Successfully terminated running process {proc.Id}\n");
                                     }
                                     catch (Exception ex)
                                     {
@@ -109,31 +114,25 @@ public partial class App : Application
                         // Give Windows a brief moment to release locks
                         System.Threading.Thread.Sleep(500);
 
-                        // 2. Remove desktop shortcut with retries for file locks
+                        // 2. Remove desktop shortcut with retries and alternate fallbacks
                         try
                         {
-                            if (File.Exists(desktopShortcut))
-                            {
-                                bool deleted = false;
-                                for (int i = 0; i < 15; i++)
-                                {
-                                    try
-                                    {
-                                        File.Delete(desktopShortcut);
-                                        deleted = true;
-                                        break;
-                                    }
-                                    catch (IOException)
-                                    {
-                                        System.Threading.Thread.Sleep(1000);
-                                    }
-                                }
+                            File.AppendAllText(logFile, $"Starting desktop shortcut deletion. Path: {desktopShortcut}\n");
+                            DeleteFileWithRetries(desktopShortcut, logFile);
 
-                                if (!deleted)
-                                {
-                                    File.AppendAllText(logFile, "Desktop shortcut is locked. Scheduling deletion on next reboot.\n");
-                                    MoveFileEx(desktopShortcut, null, MOVEFILE_DELAY_UNTIL_REBOOT);
-                                }
+                            // Try alternate desktop shortcut paths
+                            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                            string localDesktop = Path.Combine(userProfile, "Desktop", "CineStream.lnk");
+                            string oneDriveDesktop = Path.Combine(userProfile, "OneDrive", "Desktop", "CineStream.lnk");
+
+                            if (!string.Equals(localDesktop, desktopShortcut, StringComparison.OrdinalIgnoreCase))
+                            {
+                                DeleteFileWithRetries(localDesktop, logFile);
+                            }
+                            if (!string.Equals(oneDriveDesktop, desktopShortcut, StringComparison.OrdinalIgnoreCase) && 
+                                !string.Equals(oneDriveDesktop, localDesktop, StringComparison.OrdinalIgnoreCase))
+                            {
+                                DeleteFileWithRetries(oneDriveDesktop, logFile);
                             }
                         }
                         catch (Exception ex)
@@ -141,31 +140,18 @@ public partial class App : Application
                             File.AppendAllText(logFile, $"Failed to delete desktop shortcut: {ex.Message}\n");
                         }
 
-                        // 3. Remove start menu shortcut with retries
+                        // 3. Remove start menu shortcut with retries and alternate fallbacks
                         try
                         {
-                            if (File.Exists(startMenuShortcut))
-                            {
-                                bool deleted = false;
-                                for (int i = 0; i < 15; i++)
-                                {
-                                    try
-                                    {
-                                        File.Delete(startMenuShortcut);
-                                        deleted = true;
-                                        break;
-                                    }
-                                    catch (IOException)
-                                    {
-                                        System.Threading.Thread.Sleep(1000);
-                                    }
-                                }
+                            File.AppendAllText(logFile, $"Starting start menu shortcut deletion. Path: {startMenuShortcut}\n");
+                            DeleteFileWithRetries(startMenuShortcut, logFile);
 
-                                if (!deleted)
-                                {
-                                    File.AppendAllText(logFile, "Start menu shortcut is locked. Scheduling deletion on next reboot.\n");
-                                    MoveFileEx(startMenuShortcut, null, MOVEFILE_DELAY_UNTIL_REBOOT);
-                                }
+                            // Try alternate start menu shortcuts
+                            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                            string alternateStartMenu = Path.Combine(userProfile, @"AppData\Roaming\Microsoft\Windows\Start Menu\Programs", "CineStream.lnk");
+                            if (!string.Equals(alternateStartMenu, startMenuShortcut, StringComparison.OrdinalIgnoreCase))
+                            {
+                                DeleteFileWithRetries(alternateStartMenu, logFile);
                             }
                         }
                         catch (Exception ex)
@@ -177,21 +163,12 @@ public partial class App : Application
                         try
                         {
                             Registry.CurrentUser.DeleteSubKeyTree(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\CineStream", false);
+                            File.AppendAllText(logFile, "Registry entries removed successfully.\n");
                         }
                         catch (Exception ex)
                         {
                             File.AppendAllText(logFile, $"Failed to delete registry entry: {ex.Message}\n");
                         }
-
-                        // 5. Spawn detached cmd.exe to wait for us to exit and delete the target directory
-                        string deleteCmd = $"/C timeout /t 2 & rmdir /s /q \"{targetDir}\"";
-                        Process.Start(new ProcessStartInfo
-                        {
-                            FileName = "cmd.exe",
-                            Arguments = deleteCmd,
-                            CreateNoWindow = true,
-                            UseShellExecute = false
-                        });
 
                         if (!isSilent)
                         {
@@ -201,6 +178,27 @@ public partial class App : Application
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information
                             );
+                        }
+
+                        // 5. Spawn detached powershell.exe to wait for us to exit and delete the target directory
+                        try
+                        {
+                            int currentPid = Process.GetCurrentProcess().Id;
+                            string escapedTargetDir = targetDir.Replace("'", "''");
+                            string deleteCmd = $"-NoProfile -WindowStyle Hidden -Command \"Start-Sleep -Seconds 1; $p = Get-Process -Id {currentPid} -ErrorAction SilentlyContinue; if ($p) {{ $p.WaitForExit(10000) }}; Remove-Item -Path '{escapedTargetDir}' -Recurse -Force\"";
+                            
+                            File.AppendAllText(logFile, $"Spawning detached process to delete target directory: {targetDir}\n");
+                            Process.Start(new ProcessStartInfo
+                            {
+                                FileName = "powershell.exe",
+                                Arguments = deleteCmd,
+                                CreateNoWindow = true,
+                                UseShellExecute = false
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            File.AppendAllText(logFile, $"Failed to spawn directory deletion process: {ex.Message}\n");
                         }
                     }
                     catch (Exception ex)
@@ -218,6 +216,7 @@ public partial class App : Application
                         {
                             Console.Error.WriteLine($"Uninstall Error: {ex.Message}");
                         }
+                        File.AppendAllText(logFile, $"Fatal uninstallation error: {ex.Message}\n{ex.StackTrace}\n");
                     }
                 }
 
@@ -391,23 +390,83 @@ public partial class App : Application
     {
         try
         {
-            Type? shellType = Type.GetTypeFromProgID("WScript.Shell");
-            if (shellType != null)
+            string escapedShortcutPath = shortcutPath.Replace("'", "''");
+            string escapedTargetPath = targetPath.Replace("'", "''");
+            string escapedWorkingDir = workingDir.Replace("'", "''");
+            string escapedIconPath = iconPath.Replace("'", "''");
+
+            string arguments = $"-NoProfile -WindowStyle Hidden -Command \"$s = (New-Object -ComObject WScript.Shell).CreateShortcut('{escapedShortcutPath}'); $s.TargetPath = '{escapedTargetPath}'; $s.WorkingDirectory = '{escapedWorkingDir}'; $s.IconLocation = '{escapedIconPath}'; $s.Save()\"";
+            ProcessStartInfo psi = new ProcessStartInfo
             {
-                dynamic? shell = Activator.CreateInstance(shellType);
-                if (shell != null)
-                {
-                    dynamic shortcut = shell.CreateShortcut(shortcutPath);
-                    shortcut.TargetPath = targetPath;
-                    shortcut.WorkingDirectory = workingDir;
-                    shortcut.IconLocation = iconPath;
-                    shortcut.Save();
-                }
+                FileName = "powershell.exe",
+                Arguments = arguments,
+                CreateNoWindow = true,
+                UseShellExecute = false
+            };
+            using (Process? p = Process.Start(psi))
+            {
+                p?.WaitForExit(3000);
             }
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to create shortcut at {shortcutPath}: {ex.Message}");
+        }
+    }
+
+    private static void DeleteFileWithRetries(string filePath, string logFile)
+    {
+        try
+        {
+            if (File.Exists(filePath))
+            {
+                File.AppendAllText(logFile, $"Attempting to delete shortcut: {filePath}\n");
+                bool deleted = false;
+                for (int i = 0; i < 15; i++)
+                {
+                    try
+                    {
+                        File.Delete(filePath);
+                        deleted = true;
+                        File.AppendAllText(logFile, $"Deleted shortcut successfully: {filePath}\n");
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        File.AppendAllText(logFile, $"Retry {i+1} failed to delete {filePath}: {ex.Message}\n");
+                        System.Threading.Thread.Sleep(1000);
+                    }
+                }
+
+                if (!deleted)
+                {
+                    File.AppendAllText(logFile, $"Shortcut remains locked after retries. Scheduling reboot deletion for: {filePath}\n");
+                    MoveFileEx(filePath, null, MOVEFILE_DELAY_UNTIL_REBOOT);
+                }
+            }
+            else
+            {
+                File.AppendAllText(logFile, $"Shortcut not found to delete: {filePath}\n");
+            }
+        }
+        catch (Exception ex)
+        {
+            File.AppendAllText(logFile, $"Exception in DeleteFileWithRetries for {filePath}: {ex.Message}\n");
+        }
+    }
+
+    private static string GetUninstallLogPath()
+    {
+        try
+        {
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string parentDir = Path.Combine(localAppData, "WatsonTechServices");
+            Directory.CreateDirectory(parentDir);
+            return Path.Combine(parentDir, "cinestream_uninstall.log");
+        }
+        catch
+        {
+            return Path.Combine(Path.GetTempPath(), "WatsonTechServices_CineStream_uninstall.log");
         }
     }
 
