@@ -12,6 +12,10 @@ namespace cinestream_webview2;
 /// </summary>
 public partial class App : Application
 {
+    [System.Runtime.InteropServices.DllImport("kernel32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode, SetLastError = true)]
+    private static extern bool MoveFileEx(string lpExistingFileName, string? lpNewFileName, uint dwFlags);
+    private const uint MOVEFILE_DELAY_UNTIL_REBOOT = 0x00000004;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         string logFile = GetLogPath();
@@ -110,17 +114,25 @@ public partial class App : Application
                         {
                             if (File.Exists(desktopShortcut))
                             {
-                                for (int i = 0; i < 5; i++)
+                                bool deleted = false;
+                                for (int i = 0; i < 15; i++)
                                 {
                                     try
                                     {
                                         File.Delete(desktopShortcut);
+                                        deleted = true;
                                         break;
                                     }
                                     catch (IOException)
                                     {
-                                        System.Threading.Thread.Sleep(500);
+                                        System.Threading.Thread.Sleep(1000);
                                     }
+                                }
+
+                                if (!deleted)
+                                {
+                                    File.AppendAllText(logFile, "Desktop shortcut is locked. Scheduling deletion on next reboot.\n");
+                                    MoveFileEx(desktopShortcut, null, MOVEFILE_DELAY_UNTIL_REBOOT);
                                 }
                             }
                         }
@@ -134,17 +146,25 @@ public partial class App : Application
                         {
                             if (File.Exists(startMenuShortcut))
                             {
-                                for (int i = 0; i < 5; i++)
+                                bool deleted = false;
+                                for (int i = 0; i < 15; i++)
                                 {
                                     try
                                     {
                                         File.Delete(startMenuShortcut);
+                                        deleted = true;
                                         break;
                                     }
                                     catch (IOException)
                                     {
-                                        System.Threading.Thread.Sleep(500);
+                                        System.Threading.Thread.Sleep(1000);
                                     }
+                                }
+
+                                if (!deleted)
+                                {
+                                    File.AppendAllText(logFile, "Start menu shortcut is locked. Scheduling deletion on next reboot.\n");
+                                    MoveFileEx(startMenuShortcut, null, MOVEFILE_DELAY_UNTIL_REBOOT);
                                 }
                             }
                         }
