@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineStream - Watson's Tech Services</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- App Wrapper -->
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="assets/logo.png" alt="CineStream Logo" class="app-logo">
+        <span class="app-name">CineStream</span>
+      </div>
+      
+      <nav class="nav-menu">
+        <div class="nav-section-title">Theater</div>
+        <button class="nav-item active" data-target="cinestream">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          <span class="nav-label">Home</span>
+        </button>
+
+        <div class="nav-section-title">Video Streaming</div>
+        <button class="nav-item" data-target="netflix">
+          <svg class="nav-icon" viewBox="0 0 24 22" fill="currentColor"><path d="M4 2h4l8 14V2h4v20h-4l-8-14v14H4V2z"/></svg>
+          <span class="nav-label">Netflix</span>
+        </button>
+        <button class="nav-item" data-target="prime">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12H3V5h18v10zM5 17c4 2.5 10 2.5 14 0m-2-1.5l2.5 1.5-1 2.5"/></svg>
+          <span class="nav-label">Prime Video</span>
+        </button>
+        <button class="nav-item" data-target="disney">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 2h6c5 0 9 4 9 9s-4 9-9 9H4V2zm4 4v10h2c3 0 5-2 5-5s-2-5-5-5H8zM2 22c6-3 15-3 20 0"/></svg>
+          <span class="nav-label">Disney+</span>
+        </button>
+        <button class="nav-item" data-target="max">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/></svg>
+          <span class="nav-label">Max</span>
+        </button>
+        <button class="nav-item" data-target="hulu">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M5 3h4v6h6V3h4v18h-4v-8H9v8H5V3z"/></svg>
+          <span class="nav-label">Hulu</span>
+        </button>
+        <button class="nav-item" data-target="paramount">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 4L3 18h18L12 4zm0 4.5l5.5 8.5H6.5L12 8.5z M12 2a10 10 0 0 1 7 17M12 2a10 10 0 0 0-7 17"/></svg>
+          <span class="nav-label">Paramount+</span>
+        </button>
+        <button class="nav-item" data-target="peacock">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 8c0-1.5 1-3 2-3s2 1.5 2 3-1 3-2 3-2-1.5-2-3zm4.5 1.5c1-1.2 2.7-.8 3.5.5s.1 2.9-.9 3.6-2.7.8-3.5-.5-.1-2.9.9-3.6zm-9 0c-1-1.2-2.7-.8-3.5.5s-.1 2.9.9 3.6 2.7.8 3.5-.5.1-2.9-.9-3.6zM12 12.5c0 1.5-1 3-2 3s-2-1.5-2-3 1-3 2-3 2 1.5 2 3zm4.5 1.5c-1 1.2-2.7.8-3.5-.5s-.1-2.9.9-3.6 2.7-.8 3.5.5.1 2.9-.9 3.6z"/></svg>
+          <span class="nav-label">Peacock</span>
+        </button>
+        <button class="nav-item" data-target="starz">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5z"/></svg>
+          <span class="nav-label">Starz</span>
+        </button>
+        <button class="nav-item" data-target="apple">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.82M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.1.09 2.26-.59 2.95-1.39z"/></svg>
+          <span class="nav-label">Apple TV+</span>
+        </button>
+        <button class="nav-item" data-target="youtube">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21.58 7.18a3.001 3.001 0 0 0-2.12-2.12C17.59 4.5 12 4.5 12 4.5s-5.59 0-7.46.56a3.001 3.001 0 0 0-2.12 2.12C2 9.05 2 12 2 12s0 2.95.42 4.82a3.001 3.001 0 0 0 2.12 2.12C6.41 19.5 12 19.5 12 19.5s5.59 0 7.46-.56a3.001 3.001 0 0 0 2.12-2.12C22 14.95 22 12 22 12s0-2.95-.42-4.82zM10 15V9l5.2 3L10 15z"/></svg>
+          <span class="nav-label">YouTube</span>
+        </button>
+        <button class="nav-item" data-target="twitch">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+          <span class="nav-label">Twitch</span>
+        </button>
+
+        <div class="nav-section-title">Free Streaming</div>
+        <button class="nav-item" data-target="tubi">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.9-.9 1.9-2V5c0-1.1-.9-2-1.9-2zm0 14H3V5h18v12zm-5-6l-7 4V7l7 4z"/></svg>
+          <span class="nav-label">Tubi TV</span>
+        </button>
+        <button class="nav-item" data-target="freevee">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+          <span class="nav-label">Amazon Freevee</span>
+        </button>
+        <button class="nav-item" data-target="sling">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 12H4V6h11v10zm5 0h-4V6h4v10z"/></svg>
+          <span class="nav-label">Sling Freestream</span>
+        </button>
+        <button class="nav-item" data-target="pluto">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 1.93-.68 3.7-1.8 5.1z"/></svg>
+          <span class="nav-label">Pluto TV</span>
+        </button>
+        <button class="nav-item" data-target="plex">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 5.4L18.4 18H5.6L12 7.4z"/></svg>
+          <span class="nav-label">Plex</span>
+        </button>
+
+        <div class="nav-section-title">Music Streaming</div>
+        <button class="nav-item" data-target="spotify">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.893-.982-.336.075-.668-.135-.744-.47-.076-.336.135-.668.47-.743 3.856-.88 7.15-.502 9.822 1.134.296.18.387.563.205.854zm1.224-2.72c-.227.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.075-1.182-.413.125-.847-.107-.972-.52-.125-.413.107-.847.52-.972 3.666-1.112 8.232-.57 11.34 1.342.368.228.488.708.26 1.072zm.105-2.836C14.393 8.88 8.448 8.683 5.018 9.724c-.528.16-1.084-.14-1.244-.668-.16-.527.14-1.084.668-1.243 3.947-1.198 10.518-.973 14.57 1.432.475.282.63.893.348 1.368-.282.475-.893.63-1.368.348z"/></svg>
+          <span class="nav-label">Spotify</span>
+        </button>
+        <button class="nav-item" data-target="pandora">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 2h8.2c4.4 0 7.8 3.1 7.8 7.5S16.6 17 12.2 17H8v5H4V2zm4 4v7h4.2c2.2 0 3.8-1.4 3.8-3.5S14.4 6 12.2 6H8z"/></svg>
+          <span class="nav-label">Pandora</span>
+        </button>
+        <button class="nav-item" data-target="applemusic">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4 11h-3v3c0 1.1-.9 2-2 2s-2-.9-2-2v-3c0-1.1.9-2 2-2h3V6h-4v3c0 1.1-.9 2-2 2s-2-.9-2-2V6c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v7z"/></svg>
+          <span class="nav-label">Apple Music</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="avatar">W</div>
+          <div class="user-info">
+            <span class="username">Watson's Tech Services</span>
+            <span class="status">Home Streaming Client</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- CineStream Gallery View -->
+      <div id="cinestream-view" class="view-panel active">
+        
+        <!-- Search and Header -->
+        <header class="view-header">
+          <div class="search-bar">
+            <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <input type="text" id="search-input" placeholder="Search movies, genres, or cast...">
+          </div>
+          <div class="header-actions">
+            <button class="action-btn" id="watchlist-toggle-btn">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              My List (<span id="watchlist-count">0</span>)
+            </button>
+          </div>
+        </header>
+
+        <!-- Dynamic Content (Normal Gallery or Search Results) -->
+        <div id="gallery-scroller" class="gallery-scroller">
+          
+          <!-- Hero Banner Spotlight -->
+          <section id="hero-banner" class="hero-banner">
+            <div class="hero-bg-overlay"></div>
+            <div class="hero-content">
+              <span class="hero-badge">Featured Blockbuster</span>
+              <h1 class="hero-title" id="hero-title">Tears of Steel</h1>
+              <div class="hero-meta">
+                <span class="rating">★ 8.2</span>
+                <span class="year">2012</span>
+                <span class="duration">12 mins</span>
+                <span class="genre-tag">Sci-Fi</span>
+                <span class="genre-tag">VFX</span>
+              </div>
+              <p class="hero-description" id="hero-description">
+                A giant robot stomps through a futuristic Amsterdam, fueled by the heartbreak and unresolved feelings of two former lovers. Can they stop the destruction before it's too late?
+              </p>
+              <div class="hero-buttons">
+                <button class="btn btn-primary" id="hero-play-btn">
+                  <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  Play Now
+                </button>
+                <button class="btn btn-secondary" id="hero-info-btn">
+                  <svg viewBox="0 0 24 24"><path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/></svg>
+                  More Info
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Movie Rows -->
+          <div class="rows-container">
+            
+            <!-- My List Row (Conditional) -->
+            <div id="watchlist-row-container" class="movie-row-wrapper hidden">
+              <h2 class="row-title">My List</h2>
+              <div class="movie-row-outer">
+                <div class="movie-row" id="watchlist-row"></div>
+              </div>
+            </div>
+
+            <!-- Category 1: Sci-Fi & Cyberpunk -->
+            <div class="movie-row-wrapper">
+              <h2 class="row-title">Sci-Fi & Cyberpunk</h2>
+              <div class="movie-row-outer">
+                <div class="movie-row" id="row-scifi"></div>
+              </div>
+            </div>
+
+            <!-- Category 2: Animated Adventures -->
+            <div class="movie-row-wrapper">
+              <h2 class="row-title">Animated Masterpieces</h2>
+              <div class="movie-row-outer">
+                <div class="movie-row" id="row-animated"></div>
+              </div>
+            </div>
+
+            <!-- Category 3: Award-winning Classics -->
+            <div class="movie-row-wrapper">
+              <h2 class="row-title">Cinematic Shorts</h2>
+              <div class="movie-row-outer">
+                <div class="movie-row" id="row-shorts"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Search Results Page (Hidden by default) -->
+        <div id="search-results-panel" class="search-results-panel hidden">
+          <div class="results-header">
+            <h2 class="results-title">Search Results for "<span id="search-query-text"></span>"</h2>
+            <button class="back-btn" id="close-search-btn">Clear Search</button>
+          </div>
+          <div class="movie-grid" id="search-results-grid"></div>
+        </div>
+
+      </div>
+
+      <!-- Webview Containers (Loaded dynamically) -->
+      <div id="netflix-view" class="view-panel webview-panel"></div>
+      <div id="prime-view" class="view-panel webview-panel"></div>
+      <div id="disney-view" class="view-panel webview-panel"></div>
+      <div id="max-view" class="view-panel webview-panel"></div>
+      <div id="hulu-view" class="view-panel webview-panel"></div>
+      <div id="paramount-view" class="view-panel webview-panel"></div>
+      <div id="peacock-view" class="view-panel webview-panel"></div>
+      <div id="starz-view" class="view-panel webview-panel"></div>
+      <div id="apple-view" class="view-panel webview-panel"></div>
+      <div id="youtube-view" class="view-panel webview-panel"></div>
+      <div id="twitch-view" class="view-panel webview-panel"></div>
+      <div id="spotify-view" class="view-panel webview-panel"></div>
+      <div id="pandora-view" class="view-panel webview-panel"></div>
+      <div id="applemusic-view" class="view-panel webview-panel"></div>
+      <div id="tubi-view" class="view-panel webview-panel"></div>
+      <div id="freevee-view" class="view-panel webview-panel"></div>
+      <div id="sling-view" class="view-panel webview-panel"></div>
+      <div id="pluto-view" class="view-panel webview-panel"></div>
+      <div id="plex-view" class="view-panel webview-panel"></div>
+
+    </main>
+  </div>
+
+  <!-- Movie Details Modal -->
+  <div id="details-modal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" id="details-close">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+      
+      <div class="modal-hero" id="modal-hero-bg">
+        <div class="modal-hero-overlay"></div>
+        <div class="modal-hero-details">
+          <span class="modal-genre" id="modal-genres">Sci-Fi</span>
+          <h2 class="modal-title" id="modal-title">Tears of Steel</h2>
+          <div class="modal-actions">
+            <button class="btn btn-primary" id="modal-play-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play
+            </button>
+            <button class="btn btn-secondary-circle" id="modal-watchlist-btn">
+              <svg viewBox="0 0 24 24" id="modal-watchlist-icon"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-body">
+        <div class="modal-info-left">
+          <div class="info-meta">
+            <span class="rating" id="modal-rating">★ 8.2</span>
+            <span class="year" id="modal-year">2012</span>
+            <span class="duration" id="modal-duration">12m</span>
+            <span class="quality">Ultra HD</span>
+          </div>
+          <p class="modal-plot" id="modal-plot">Plot description here...</p>
+        </div>
+        <div class="modal-info-right">
+          <div class="info-group">
+            <span class="info-label">Director:</span>
+            <span class="info-value" id="modal-director">Ian Hubert</span>
+          </div>
+          <div class="info-group">
+            <span class="info-label">Cast:</span>
+            <span class="info-value" id="modal-cast">Derek de Lint, Sergio Hasselbaink...</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recommended Movies section -->
+      <div class="modal-recommendations">
+        <h3>More Like This</h3>
+        <div class="recommended-grid" id="modal-recommended-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Video Player Modal -->
+  <div id="player-modal" class="player-modal">
+    <div class="player-container" id="player-container">
+      
+      <!-- HTML5 Video element -->
+      <video id="video-element" src=""></video>
+
+      <!-- Video Control Overlays -->
+      <div class="player-overlay" id="player-overlay">
+        
+        <!-- Header / Close button -->
+        <header class="player-header">
+          <button class="player-back-btn" id="player-close">
+            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            Back to CineStream
+          </button>
+          <div class="player-title" id="player-video-title">Tears of Steel</div>
+        </header>
+
+        <!-- Big Play/Pause visual cue in center -->
+        <div class="center-cue" id="center-cue">
+          <svg viewBox="0 0 24 24" class="cue-icon"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+
+        <!-- Progress Timeline Bar -->
+        <div class="player-progress-container" id="progress-container">
+          <div class="player-progress-bar" id="progress-bar">
+            <div class="progress-filled" id="progress-filled"></div>
+            <div class="progress-hover-preview" id="progress-hover"></div>
+            <div class="progress-handle" id="progress-handle"></div>
+          </div>
+        </div>
+
+        <!-- Controls Footer -->
+        <div class="player-controls">
+          <div class="controls-left">
+            <!-- Play/Pause -->
+            <button class="player-btn" id="player-play-btn">
+              <svg viewBox="0 0 24 24" id="play-icon"><path d="M8 5v14l11-7z"/></svg>
+              <svg viewBox="0 0 24 24" id="pause-icon" class="hidden"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+
+            <!-- Skip Back 10s -->
+            <button class="player-btn" id="player-skip-back">
+              <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+            </button>
+
+            <!-- Skip Forward 10s -->
+            <button class="player-btn" id="player-skip-forward">
+              <svg viewBox="0 0 24 24"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.96 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/></svg>
+            </button>
+
+            <!-- Volume Controls -->
+            <div class="volume-container">
+              <button class="player-btn" id="player-mute-btn">
+                <svg viewBox="0 0 24 24" id="volume-high-icon"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                <svg viewBox="0 0 24 24" id="volume-muted-icon" class="hidden"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+              </button>
+              <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1" class="volume-slider">
+            </div>
+
+            <!-- Time Display -->
+            <div class="time-display">
+              <span id="time-current">00:00</span>
+              <span class="time-separator">/</span>
+              <span id="time-duration">00:00</span>
+            </div>
+          </div>
+
+          <div class="controls-right">
+            <!-- Playback Speed -->
+            <div class="speed-container">
+              <button class="player-btn speed-btn" id="player-speed-btn">1.0x</button>
+              <div class="speed-menu hidden" id="speed-menu">
+                <button data-speed="0.5">0.5x</button>
+                <button data-speed="0.75">0.75x</button>
+                <button data-speed="1.0" class="active">Normal</button>
+                <button data-speed="1.25">1.25x</button>
+                <button data-speed="1.5">1.5x</button>
+                <button data-speed="2.0">2.0x</button>
+              </div>
+            </div>
+
+            <!-- Fullscreen -->
+            <button class="player-btn" id="player-fullscreen-btn">
+              <svg viewBox="0 0 24 24" id="fullscreen-enter-icon"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+              <svg viewBox="0 0 24 24" id="fullscreen-exit-icon" class="hidden"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Build and Output Directories
+[Bb]in/
+[Oo]bj/
+publish/
+
+# IDE and Editor files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.idea/
+.vscode/
+
+# User-specific / Local settings
+*.user
+install.log
+install_debug.log
+out_std.txt
+out_err.txt
+out_debug.txt
+trace_out.txt
+out_std_installed.txt
+out_err_installed.txt
+publish_out.txt
+
+# OS metadata
+Thumbs.db
+ehthumbs.db
+Desktop.ini
