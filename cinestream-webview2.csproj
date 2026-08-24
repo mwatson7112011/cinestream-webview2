@@ -9,10 +9,10 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <Version>1.0.0</Version>
-    <Company>Watson's Tech Services</Company>
-    <Authors>Watson's Tech Services</Authors>
+    <Company>Watson Tech</Company>
+    <Authors>Watson Tech</Authors>
     <Product>CineStream</Product>
-    <Description>CineStream Desktop Client by Watson's Tech Services</Description>
+    <Description>CineStream Desktop Client</Description>
   </PropertyGroup>
 
   <ItemGroup>

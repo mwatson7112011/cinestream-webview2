@@ -74,6 +74,10 @@
           <svg class="nav-icon" viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
           <span class="nav-label">Twitch</span>
         </button>
+        <button class="nav-item" data-target="fandango">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M22 10V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z"/></svg>
+          <span class="nav-label">Fandango</span>
+        </button>
 
         <div class="nav-section-title">Free Streaming</div>
         <button class="nav-item" data-target="tubi">
@@ -113,12 +117,15 @@
       </nav>
 
       <div class="sidebar-footer">
-        <div class="user-profile">
-          <div class="avatar">W</div>
+        <div class="user-profile" id="user-profile-card">
+          <div class="avatar" id="user-avatar">?</div>
           <div class="user-info">
-            <span class="username">Watson's Tech Services</span>
-            <span class="status">Home Streaming Client</span>
+            <span class="username" id="user-display-name">Guest User</span>
+            <span class="status" id="user-status-link"><a href="#" id="feedback-trigger">Report Bug / Feedback</a></span>
           </div>
+          <button class="profile-settings-btn" id="profile-settings-trigger" title="Edit Profile">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          </button>
         </div>
       </div>
     </aside>
@@ -240,6 +247,7 @@
       <div id="pandora-view" class="view-panel webview-panel"></div>
       <div id="applemusic-view" class="view-panel webview-panel"></div>
       <div id="tubi-view" class="view-panel webview-panel"></div>
+      <div id="fandango-view" class="view-panel webview-panel"></div>
       <div id="freevee-view" class="view-panel webview-panel"></div>
       <div id="sling-view" class="view-panel webview-panel"></div>
       <div id="pluto-view" class="view-panel webview-panel"></div>
@@ -393,6 +401,43 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Profile & Feedback Settings Modal -->
+  <div id="profile-modal" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+      <button class="modal-close" id="profile-modal-close">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+
+      <div style="padding: 30px;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 10px;">
+          <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: var(--accent-neon);"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          User Profile Settings
+        </h2>
+
+        <div class="profile-form" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 25px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px;">Your Name</label>
+            <input type="text" id="profile-name-input" placeholder="Enter your name" style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); padding: 10px 14px; border-radius: 8px; color: var(--text-main); font-family: inherit; font-size: 0.95rem; outline: none; transition: var(--transition-smooth);">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px;">Your Email (optional)</label>
+            <input type="email" id="profile-email-input" placeholder="you@example.com" style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); padding: 10px 14px; border-radius: 8px; color: var(--text-main); font-family: inherit; font-size: 0.95rem; outline: none; transition: var(--transition-smooth);">
+          </div>
+          <button class="btn btn-primary" id="save-profile-btn" style="width: 100%; justify-content: center; margin-top: 10px;">Save Profile</button>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+          <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 10px; color: var(--text-main);">Support & Feedback</h3>
+          <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 15px; line-height: 1.5;">Have a suggestion or found a bug? Click below to draft an email directly to Watson's Tech Services.</p>
+          <button class="btn btn-secondary" id="send-email-btn" style="width: 100%; justify-content: center; gap: 10px;">
+            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            Send Feedback / Bug Report
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

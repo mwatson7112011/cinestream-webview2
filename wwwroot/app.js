@@ -196,6 +196,12 @@ document.addEventListener('DOMContentLoaded', () => {
   renderGallery();
   setupWatchlistCount();
   setupEventListeners();
+  initializeProfile();
+
+  // First-run check: if no profile name is set, show the settings modal automatically
+  if (!localStorage.getItem('cinestream_profile_name')) {
+    setTimeout(openProfileSettings, 1500);
+  }
 
   // Handle mouse leaving the sidebar to hide it when a streaming service is active
   document.addEventListener('mouseleave', () => {
@@ -243,6 +249,7 @@ function switchTab(targetName) {
       disney: 'https://www.disneyplus.com',
       max: 'https://www.max.com',
       hulu: 'https://www.hulu.com',
+      fandango: 'https://athome.fandango.com/',
       paramount: 'https://www.paramountplus.com',
       peacock: 'https://www.peacocktv.com',
       starz: 'https://www.starz.com',
@@ -768,4 +775,129 @@ function setupEventListeners() {
       }
     }
   });
+
+  // Profile settings trigger
+  const settingsBtn = document.getElementById('profile-settings-trigger');
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openProfileSettings();
+    });
+  }
+
+  // Close profile modal
+  const profileCloseBtn = document.getElementById('profile-modal-close');
+  if (profileCloseBtn) {
+    profileCloseBtn.addEventListener('click', closeProfileSettings);
+  }
+
+  // Save profile button
+  const saveBtn = document.getElementById('save-profile-btn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', saveProfile);
+  }
+
+  // Trigger feedback mailto link
+  const feedbackLink = document.getElementById('feedback-trigger');
+  if (feedbackLink) {
+    feedbackLink.addEventListener('click', triggerEmailFeedback);
+  }
+
+  const sendEmailBtn = document.getElementById('send-email-btn');
+  if (sendEmailBtn) {
+    sendEmailBtn.addEventListener('click', triggerEmailFeedback);
+  }
+
+  // Close modal on outside click
+  const profileModal = document.getElementById('profile-modal');
+  window.addEventListener('click', (e) => {
+    if (e.target === profileModal) {
+      closeProfileSettings();
+    }
+  });
+}
+
+// ==========================================================================
+// User Profile & Feedback Logic
+// ==========================================================================
+function initializeProfile() {
+  const savedName = localStorage.getItem('cinestream_profile_name') || "Guest User";
+  const savedEmail = localStorage.getItem('cinestream_profile_email') || "";
+
+  // Update profile inputs
+  document.getElementById('profile-name-input').value = savedName === "Guest User" ? "" : savedName;
+  document.getElementById('profile-email-input').value = savedEmail;
+
+  updateProfileUI(savedName);
+}
+
+function updateProfileUI(name) {
+  // Update name in sidebar
+  const displayNameEl = document.getElementById('user-display-name');
+  if (displayNameEl) {
+    displayNameEl.textContent = name;
+  }
+
+  // Update avatar initials
+  const avatarEl = document.getElementById('user-avatar');
+  if (avatarEl) {
+    if (name === "Guest User") {
+      avatarEl.textContent = "?";
+    } else {
+      // Get first letter of each word (up to 2 characters) or just the first character
+      const initials = name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      avatarEl.textContent = initials || "?";
+    }
+  }
+
+  // Update window title if possible
+  if (window.chrome && window.chrome.webview) {
+      window.chrome.webview.postMessage(JSON.stringify({
+          type: 'updateTitle',
+          name: name
+      }));
+  }
+}
+
+function openProfileSettings() {
+  document.getElementById('profile-modal').style.display = 'flex';
+}
+
+function closeProfileSettings() {
+  document.getElementById('profile-modal').style.display = 'none';
+}
+
+function saveProfile() {
+  const nameInput = document.getElementById('profile-name-input').value.trim();
+  const emailInput = document.getElementById('profile-email-input').value.trim();
+
+  const finalName = nameInput || "Guest User";
+  localStorage.setItem('cinestream_profile_name', finalName);
+  localStorage.setItem('cinestream_profile_email', emailInput);
+
+  updateProfileUI(finalName);
+  closeProfileSettings();
+}
+
+function triggerEmailFeedback(e) {
+  if (e) e.preventDefault();
+
+  const savedName = localStorage.getItem('cinestream_profile_name') || "Guest User";
+  const savedEmail = localStorage.getItem('cinestream_profile_email') || "None";
+
+  const to = 'mwatson7112011@gmail.com';
+  const subject = encodeURIComponent('CineStream Suggestions / Bug Report');
+
+  const bodyText = `Hi Watson's Tech Services,
+
+[Please describe your suggestions or bug details here]
+
+--
+Sender Details:
+Name: ${savedName}
+Email: ${savedEmail}
+Platform: ${navigator.userAgent}`;
+
+  const body = encodeURIComponent(bodyText);
+  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
 }

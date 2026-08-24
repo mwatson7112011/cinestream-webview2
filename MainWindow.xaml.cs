@@ -91,9 +91,6 @@ public partial class MainWindow : Window
             // Add message received handler
             MainWebView.CoreWebView2.WebMessageReceived += MainWebView_WebMessageReceived;
 
-            // Add navigation completed handler for dynamic profile personalization
-            MainWebView.CoreWebView2.NavigationCompleted += MainWebView_NavigationCompleted;
-
             // Add process failed handler to monitor renderer/GPU crashes
             MainWebView.CoreWebView2.ProcessFailed += (s, e) =>
             {
@@ -109,66 +106,6 @@ public partial class MainWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show($"Failed to initialize Main WebView: {ex.Message}\nStack Trace: {ex.StackTrace}", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-    }
-
-    private async void MainWebView_NavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
-    {
-        if (e.IsSuccess)
-        {
-            try
-            {
-                string currentUri = MainWebView.Source?.ToString() ?? "";
-                if (currentUri.Contains("index.html") || currentUri.Equals("http://cinestream.local/", StringComparison.OrdinalIgnoreCase))
-                {
-                    string username = Environment.UserName;
-                    string displayName = "Watson's Tech Services";
-                    string avatarLetter = "W";
-
-                    if (!string.Equals(username, "wats", StringComparison.OrdinalIgnoreCase) &&
-                        !string.Equals(username, "mwats", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (!string.IsNullOrEmpty(username))
-                        {
-                            var parts = username.Split(new[] { ' ', '.', '_', '-' }, StringSplitOptions.RemoveEmptyEntries);
-                            for (int i = 0; i < parts.Length; i++)
-                            {
-                                if (parts[i].Length > 0)
-                                {
-                                    parts[i] = char.ToUpper(parts[i][0]) + parts[i].Substring(1).ToLower();
-                                }
-                            }
-                            displayName = string.Join(" ", parts);
-                            if (displayName.Length > 0)
-                            {
-                                avatarLetter = displayName[0].ToString().ToUpper();
-                            }
-                        }
-                    }
-
-                    // Also change window title to: CineStream - [displayName]
-                    this.Title = $"CineStream - {displayName}";
-
-                    // Inject JavaScript to update UI elements
-                    string script = $@"
-                        (function() {{
-                            const usernameEl = document.querySelector('.sidebar-footer .username');
-                            if (usernameEl) {{
-                                usernameEl.textContent = {JsonSerializer.Serialize(displayName)};
-                            }}
-                            const avatarEl = document.querySelector('.sidebar-footer .avatar');
-                            if (avatarEl) {{
-                                avatarEl.textContent = {JsonSerializer.Serialize(avatarLetter)};
-                            }}
-                        }})();
-                    ";
-                    await MainWebView.CoreWebView2.ExecuteScriptAsync(script);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[CineStream Host] Failed to personalize UI: {ex.Message}");
-            }
         }
     }
 
@@ -247,6 +184,11 @@ public partial class MainWindow : Window
                         partition = partition.Replace("persist:", "");
                         System.Diagnostics.Debug.WriteLine($"[CineStream Host] openPopup requested: URL={url}, Partition={partition}");
                         OpenPopupWindow(url, partition);
+                    }
+                    else if (type == "updateTitle")
+                    {
+                        var name = message.GetProperty("name").GetString() ?? "Guest User";
+                        this.Title = $"CineStream - {name}";
                     }
                 }
                 catch (Exception ex)
